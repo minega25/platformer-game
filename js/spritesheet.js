@@ -16,8 +16,8 @@ class SpriteSheet {
       .getContext("2d")
       .drawImage(
         this.image,
-        x * this.width,
-        y * this.height,
+        x,
+        y,
         this.width,
         this.height,
         0,
@@ -28,9 +28,29 @@ class SpriteSheet {
     this.tiles.set(name, buffer);
   }
 
+  defineTile(name, x, y) {
+    const buffer = document.createElement("canvas");
+    buffer.width = this.width;
+    buffer.height = this.height;
+    buffer
+      .getContext("2d")
+      .drawImage(
+        this.image,
+        x,
+        y,
+        this.width,
+        this.height / 2,
+        0,
+        0,
+        this.actualWidth,
+        this.actualHeight / 2
+      );
+    this.tiles.set(name, buffer);
+  }
+
   draw(name, context, x, y) {
     const buffer = this.tiles.get(name);
-    context.drawImage(buffer, x, y);
+    context.drawImage(buffer, x + x / 3.12, y);
   }
 }
 

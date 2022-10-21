@@ -1,10 +1,8 @@
 import SpriteSheet from "./spritesheet";
-import { loadImage } from "./loaders";
-import convertToJSON from "./convertXMLToJSON";
-import SPRITE_COMPLETE_DATA from "../assets/Spritesheets/spritesheet_complete.xml";
+import { loadImage, loadLevel } from "./loaders";
 
 const SPRITE_COMPLETE_URL = "./assets/Spritesheets/spritesheet_complete.png";
-const BACKGROUND = "./assets/Backgrounds/colored_shroom.png";
+const BACKGROUND = "./assets/Backgrounds/colored_desert.png";
 const TILE_WIDTH = 128;
 const TILE_HEIGHT = 256;
 const ACTUAL_WIDTH = 42;
@@ -20,7 +18,28 @@ loadImage(BACKGROUND).then((image) => {
   canvas.getContext("2d").drawImage(image, 0, 0, 640, 480);
 });
 
-const spriteData = convertToJSON(SPRITE_COMPLETE_DATA);
+const defineSprites = (sprites) => {
+  sprites.define("hero", 260, 258);
+  sprites.defineTile("dirt", 1820, 910);
+};
+
+const drawMap = (level, sprites) => {
+  loadLevel(level).then(({ map }) => {
+    const mapItems = new Map();
+    mapItems.set("=", "dirt");
+
+    for (let i = 0; i < map.length; i++) {
+      map[i].split("").forEach((item, index) => {
+        if (mapItems.has(item)) {
+          console.log("index :>> ", index);
+          console.log("i :>> ", i);
+          const sprite = mapItems.get(item);
+          sprites.draw(sprite, context, index * 32, i * 60);
+        }
+      });
+    }
+  });
+};
 
 loadImage(SPRITE_COMPLETE_URL).then((image) => {
   const sprites = new SpriteSheet(
@@ -31,7 +50,9 @@ loadImage(SPRITE_COMPLETE_URL).then((image) => {
     ACTUAL_HEIGHT
   );
 
-  sprites.define("hero", 0, 0);
+  defineSprites(sprites);
   sprites.draw("hero", context, 0, 0);
+
+  drawMap("1-1", sprites);
 });
 
